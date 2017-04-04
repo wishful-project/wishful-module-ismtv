@@ -30,6 +30,6 @@ class IsmtvModule(wishful_module.AgentModule):
         if not self.sweep_config:
             self.sweep_config = self.config_list.get_sweep_config(params[0], params[1], params[2])
         sweep = self.sensor.sweep(self.sweep_config)
-        f = self.sweep_config.get_hz_list()
+        f = list(self.sweep_config.get_hz_list())
         p = sweep.data
         return {'frequency':f, 'power':p}
