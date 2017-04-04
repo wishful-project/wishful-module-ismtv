@@ -18,18 +18,18 @@ class IsmtvModule(wishful_module.AgentModule):
     node = alh.ALHWeb("http://localhost:9000/communicator", "/dev/ttyS1")
     sensor = SpectrumSensor(node)
     config_list = sensor.get_config_list()
-    sweep_config = config_list.get_sweep_config(868.3e6, 919.0e6, 400e3)
+    sweep_config = None
     
     def __init__(self):
         super(IsmtvModule, self).__init__()
         self.log = logging.getLogger('IsmtvModule')
 
-    @wishful_module.bind_function(upis.radio.get_noise)
-    def get_noise(self):
-        self.log.debug("Get noise".format())
-        return self._calculate_noise()
-        
-    def _calculate_noise(self):
+    @wishful_module.bind_function(upis.radio.get_measurements)
+    def get_measurements(self, params):
+        self.log.debug("Get Measurements".format())
+        if not self.sweep_config:
+            self.sweep_config = self.config_list.get_sweep_config(params[0], params[1], params[2])
         sweep = self.sensor.sweep(self.sweep_config)
-        noise = sweep.data
-        return sum(noise) / len(noise)
+        f = self.sweep_config.get_hz_list()
+        p = sweep.data
+        return {'frequency':f, 'power':p}
