@@ -17,15 +17,16 @@ __email__ = "matevz.vucnik@ijs.si"
 
 @wishful_module.build_module
 class IsmtvModule(wishful_module.AgentModule):
-    node = alh.ALHWeb("http://192.168.6.2:9000/communicator", "/dev/ttyS1")
+    node = None
     sensor = None
     sweep_config = None
     generator = None
     tx_config = None
     
-    def __init__(self):
+    def __init__(self, service, serial):
         super(IsmtvModule, self).__init__()
         self.log = logging.getLogger('IsmtvModule')
+        self.node = alh.ALHWeb(service + "/communicator", serial)
 
     @wishful_module.bind_function(upis.radio.get_measurements)
     def get_measurements(self, params):
