@@ -44,7 +44,7 @@ class IsmtvModule(wishful_module.AgentModule):
 
 
     @wishful_module.bind_function(upis.radio.play_waveform)
-    def play_waveform(self, iface, freq, power_lvl):
+    def play_waveform(self, iface, freq, power_lvl, kwargs):
         if not self.generator:
             self.generator = SignalGenerator(self.node)
             config_list = self.generator.get_config_list()
@@ -54,7 +54,7 @@ class IsmtvModule(wishful_module.AgentModule):
                 return 2
 
         now = time.time()
-        program = SignalGeneratorProgram(self.tx_config, now + 5, iface)
+        program = SignalGeneratorProgram(self.tx_config, now + 5, kwargs['play_time'])
         self.generator.program(program)
 
         return 0
