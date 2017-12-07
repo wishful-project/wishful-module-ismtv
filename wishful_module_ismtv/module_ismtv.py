@@ -5,6 +5,7 @@ import wishful_framework as wishful_module
 from wishful_framework.classes import exceptions
 
 import time
+import serial
 from vesna import alh
 from vesna.alh.spectrumsensor import SpectrumSensor
 from vesna.alh.signalgenerator import SignalGenerator, SignalGeneratorProgram
@@ -23,10 +24,11 @@ class IsmtvModule(wishful_module.AgentModule):
     generator = None
     tx_config = None
     
-    def __init__(self, service, serial):
+    def __init__(self, dev):
         super(IsmtvModule, self).__init__()
         self.log = logging.getLogger('IsmtvModule')
-        self.node = alh.ALHWeb(service + "/communicator", serial)
+        ser = serial.Serial(dev, 115200)
+        self.node = alh.ALHTerminal(ser)
 
     @wishful_module.bind_function(upis.radio.get_measurements)
     def get_measurements(self, params):
